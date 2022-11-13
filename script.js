@@ -9,21 +9,33 @@ var qty  = 0, maxQty = 4,
 	user = "",
 	start = false,
 	btn,
+	pastTime, presentTime, countWaterDigested = 0,
 	btn100 = document.querySelector('#button100'),
 	btn50 = document.querySelector('#button50'),
-	btn25 = document.querySelector('#button25');
+	btn25 = document.querySelector('#button25'),
+	btnTimer = document.querySelector('#buttonTimer');
 	
-checkUser();
-checkTime();
-setAppContent();
+
+window.onload = function() {
+//	setCookie("qty", 0);
+	checkUser();
+	checkTime();
+	setAppContent();
+	btnTimer.click();
+	if(countWaterDigested > 0) {
+	}
+}
 
 btn100.addEventListener('click', update);
 btn50.addEventListener('click', update);
 btn25.addEventListener('click', update);
+btnTimer.addEventListener('click', update);
 
 function update() {
 	btn = this;
 	start = true;
+	
+	checkTime();
 	
   if((percent < 100) || (isInProgress == false)) {
 //	if (isInProgress) return;
@@ -31,6 +43,7 @@ function update() {
 	  btn100.removeEventListener('click', update);
 	  btn50.removeEventListener('click', update);
 	  btn25.removeEventListener('click', update);
+	  btnTimer.removeEventListener('click', update);
 
 	  isInProgress = true;
 	  
@@ -40,18 +53,26 @@ function update() {
 	  }, 1000);
 	  
 	  rotateTracker();
-	var time1 = document.querySelector(".tracker__item:nth-last-child(3)").innerHTML;
-	var time2 = document.querySelector(".tracker__item:nth-last-child(2)").innerHTML;
-	var time3 = document.querySelector(".tracker__item:nth-last-child(1)").innerHTML;
-	
-	  setCookie("time1", time1);
-	  setCookie("time2", time2);
-	  setCookie("time3", time3);
-	  
+	  if(btn.getAttribute("id") != "buttonTimer") {
+			
+
+//			alert("HERE!");	  
 		var thing = parseFloat(btn.getAttribute("qty"));
 		qty += thing;
-		setCookie("qty", qty);
-		
+		if(qty < 0) {
+			qty = 0;
+		}
+			setCookie("qty", qty);
+			
+			setCookie("time1", getCookie("time2"));
+			setCookie("time2", getCookie("time3"));
+			setCookie("time3", getTime());
+			
+//		alert("QTY: " + qty);
+	  } else {
+//		  alert("AAA");
+	  }
+	  
 		random = (qty * 100) / maxQty;
 	  
 	  diff = percent - random;
@@ -64,6 +85,7 @@ function update() {
 		  btn100.addEventListener('click', update);
 		  btn50.addEventListener('click', update);
 		  btn25.addEventListener('click', update);
+		  btnTimer.addEventListener('click', update);
 
 		  clearInterval(interval);
 		  isInProgress = false;
@@ -89,7 +111,7 @@ function update() {
 		isInProgress = false;
 	  }, 16);
 	  
-		checkTime();
+	setAppContent();
   } else {
 	  alert("Yaay! Congrats! Your water intake is healthy!");
   }
@@ -122,29 +144,40 @@ function checkUser() {
   user = getCookie("username");
   if (user != "") {
     alert("Welcome again " + user);
+	qty = parseFloat(getCookie("qty"));
   } else {
     user = prompt("Please enter your name:", "");
     if (user != "" && user != null) {
 		setCookie("username", user);
+		qty = 0;
    }
   }
 }
 
-var pastTime, presentTime, countWaterDigested;
 function checkTime() {
-	countWaterDigested  = 0;
   pastTime = getCookie("time3");
   if (pastTime != "") {
 	  presentTime = getTime();
 	  
 	 var timeDiff = strToMins(presentTime) - strToMins(pastTime);
 	 // 0.1 litres every 36min
+//	 alert("time difference: " + timeDiff + " (" + presentTime + "/" + strToMins(presentTime) + " - " + pastTime + "/" + strToMins(pastTime) + ")");
 	 while(timeDiff > 36) {
 		 timeDiff = timeDiff - 36;
-		 waterDigested += 0.1;
+		 countWaterDigested += 0.1;
 	 }
-	 alert(timeDiff + " <==> " + countWaterDigested);
+//	 alert("water digested in idle time: " + countWaterDigested);
 	 
+	 if(countWaterDigested > 0) {
+		 var oldQty = getCookie("qty");
+		 var newQty = oldQty - countWaterDigested;
+			 qty = newQty;
+		 if(qty < 0) {
+			 qty = 0;
+		 }
+		 
+		document.querySelector("#buttonTimer").setAttribute("qty", qty);
+	 }
 	  
 //	  alert(pastTime + " - " + presentTime + " ==> " + strToMins(pastTime) - strToMins(presentTime));
   } else {
@@ -159,8 +192,19 @@ function checkTime() {
 		  var s = t.split(":");
 		  return Number(s[0]) * 60 + Number(s[1]);
 	  }
+	  
 function setAppContent() {
+	countWaterDigested = 0;
 	
+	document.querySelector(".tracker__item:nth-last-child(3)").innerHTML = getCookie("time1");
+	document.querySelector(".tracker__item:nth-last-child(2)").innerHTML = getCookie("time2");
+	document.querySelector(".tracker__item:nth-last-child(1)").innerHTML = getCookie("time3");
+
+//	document.querySelector(".tracker__item:nth-last-child(3)").innerHTML = "AAA";
+//	document.querySelector(".tracker__item:nth-last-child(2)").innerHTML = "GGG";
+//	document.querySelector(".tracker__item:nth-last-child(1)").innerHTML = "VVV";
+	
+	document.querySelector("#buttonTimer").setAttribute("qty", qty);
 };
 
 function getTime() {
@@ -195,4 +239,14 @@ function rotateTracker() {
   tracker.style.transform = 'translate( 0, ' + trackerOffset + 'px)';
     
   tracker.appendChild(node);
+  
+ 
+	var time1 = document.querySelector(".tracker__item:nth-last-child(3)").innerHTML;
+	var time2 = document.querySelector(".tracker__item:nth-last-child(2)").innerHTML;
+	var time3 = document.querySelector(".tracker__item:nth-last-child(1)").innerHTML; 
+		if((getCookie("time1") == "") && (getCookie("time2") == "") && (getCookie("time3") == "")) {
+			setCookie("time1", time1);
+			setCookie("time2", time2);
+			setCookie("time3", time3);
+		}
 }

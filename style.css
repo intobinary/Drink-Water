@@ -5,6 +5,13 @@
   outline: none;
 }
 
+.js-particles { z-index: 10; }
+.app,
+.header { z-index: 20; }
+
+@font-face{font-family:"OCR A";src:url("OCRAEXT.ttf"); }
+*, body{font-family:"OCR A", serif;}
+
 body, html {
 	min-height: 100%;
 }
@@ -15,7 +22,7 @@ html {
 }
 body {
 	
-  background: #f0f6fc;
+  background: #03EA60;
   font: 14px/1 'Open Sans', helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   
@@ -36,6 +43,21 @@ body {
 	
 //	border: 1px solid yellow;
 }
+.header-logo {
+	height: 100%;
+	padding-bottom: .5em;
+}
+.header-logo-img,
+.header-logo-div {
+	display: inline-block;
+	vertical-align: middle;
+}
+.header-logo-div {
+	text-align: left;
+}
+.header-logo-img {
+	width: auto; height: 100%;
+}
 
 .app {
 	width: 95%; max-width: 280px; height: 90%;
@@ -43,9 +65,20 @@ body {
 //  transform: translate(-50%, -50%);
 //  transform: translateX(100%);
 
-  background: #1e384c;
+//  background: #1e384c;
+//  background: #03EA60;
+//  background: #f0f6fc;
+	background-color: rgba(255, 255, 255, .5);
   border-radius: .5em;
   overflow: hidden;
+  
+	border-width: 0 .5em .5em .5em; border-style: solid;
+	border-color: white;
+}
+
+#buttonTimer,
+#buttonTimer:before {
+	display: none !important;
 }
 
 .app_animated #button100:active:before,
@@ -391,5 +424,9 @@ body {
   }
 }
 
-
 @media screen and (max-width:50em){}
+
+.js-particles {
+	width: 100%; height: 100%;
+	position: fixed; top: 0; left: 0;
+}

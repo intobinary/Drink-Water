@@ -32,6 +32,8 @@
 	<button class="button" id="button100" qty="1">1L</button>
 	<button class="button" id="button50" qty="0.5">1/2L</button>
 	<button class="button" id="button25" qty="0.25">1/4L</button>
+	
+	<button class="button" id="buttonTimer" qty="0">Timer</button>
   </div>
   <div class="water" id="water">
     <svg class="water__wave water__wave_back" viewBox="0 0 560 20">
@@ -58,10 +60,17 @@
 </div>
 
 		<header class="header">
-			Drink Water!
+			<figure class="header-logo">
+				<a href="https://intobinary.org"><img src="logo_icon_white.png" class="header-logo-img" alt="Drink Water" /></a>
+				<div class="header-logo-div">
+					<h1 class="header-logo-title">Drink Water in Abundance!</h1>
+					<p class="header-logo-p">(Version 1.0.0)</p>
+				</div>
+			</figure>
 		</header>
-	  
-		<script src="jQuery.js"></script>
+
+		<div id="particles-js" class="js-particles"></div>
+		<script src="particlesJS.js"></script>
 		<script src="script.js"></script>
 	</body>
 </html>
